@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>PureCloud Webchat Demo</title>
+</head>
+
+<body>
+    <form id="chatForm">
+        <h3>Participant Information- local</h3>
+
+        <table class="webchat-config">
+            <tbody>
+                <tr>
+                    <th>First Name:</th>
+                    <td><input type="text" id="first-name" value="" /></td>
+                </tr>
+                <tr>
+                    <th>Last Name:</th>
+                    <td><input type="text" id="last-name" value="" /></td>
+                </tr>
+                 <tr>
+                    <th>Email Address:</th>
+                    <td><input type="text" id="email" value="" /></td>
+                </tr>
+				<tr>
+                    <th>Company:</th>
+                    <td><input type="text" id="company" value="" /></td>
+                </tr>
+				<tr>
+                    <th>Telephone Number:</th>
+                    <td><input type="text" id="number" value="" /></td>
+                </tr>
+				<tr>
+                    <th>Order ID (N/A if not related to an order):</th>
+                    <td><input type="text" id="order-id" value="" /></td>
+                </tr>
+            </tbody>
+			
+        </table>
+        <button type="button" id="chat-button">Start Chat</button>
+    </form>
+    <div id="chat-container" style="height:600px"></div>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+	
+<script
+  id="purecloud-webchat-js"
+  type="text/javascript"
+  src="https://apps.mypurecloud.com/webchat/jsapi-v1.js"
+  region="us-east-1"
+  org-guid="ee84d286-aa0f-4426-b0a2-0bfef5b4cbe1"
+  deployment-key="d9dc0ffb-6199-4efd-90f8-db85905f20e0"
+></script>
+
+    <script type="text/javascript">
+        $(document).ready(function initializeChat () {
+            var chatConfig = {
+                webchatAppUrl: 'https://apps.mypurecloud.com/webchat',
+                webchatServiceUrl: 'https://realtime.mypurecloud.com:443',
+                orgId: 16320,
+                orgName: 'genesysmanilaenablementteam',
+                priority: 0,
+                queueName : 'Rence Test Queue',
+                showSubmitButton: true,
+                logLevel: 'DEBUG',
+                locale: 'en',
+                reconnectEnabled: true,
+                reconnectOrigins: ['https://example.com', 'https://help.example.com', 'https://shop.example.com'],
+				companyLogoSmall: {
+                    width: 150,
+                    height: 32,
+                    url: 'https://www.xdplatform.com/wp-content/uploads/2015/09/xpressdocs_logo_blk_sticky.png'
+                },
+                agentAvatar: {
+                    width: 462,
+                    height: 462,
+                    url: 'https://d3a63qt71m2kua.cloudfront.net/developer-tools/917/assets/images/agent.jpg'
+                },
+                welcomeMessage: 'Thank you for choosing PureCloud! A Client Services Representative will be with you momentarily.',
+                cssClass: 'webchat-frame',
+                css: {
+                    width: '100%',
+                    height: '100%'
+                }
+            };
+            var chatButton = document.getElementById('chat-button');
+            // Required if reconnects are enabled
+            window.PURECLOUD_WEBCHAT_FRAME_CONFIG = {
+                containerEl: 'chat-container'
+            };
+            ININ.webchat.create(chatConfig)
+                .then(function (webchat) {
+                    if (webchat.isAutoJoined()) {
+                    } else {
+                        chatButton.onclick = function () {
+                            var firstName = document.getElementById('first-name').value;
+                            var lastName = document.getElementById('last-name').value;
+                            var emailAddress = document.getElementById('email').value;
+							var company = document.getElementById('company').value;
+							var telephoneNumber = document.getElementById('number').value;
+							var orderid = document.getElementById('order-id').value;
+                            
+                            webchat.getConfig().setData({
+                                firstName: firstName,
+                                lastName: lastName,
+                                emailAddress: emailAddress,
+                                company: company,
+                                phoneNumber: telephoneNumber,
+                                orderId: orderid,
+								
+								customField1Label: 'Email Address',
+								customField1: emailAddress,
+								customField2Label: 'Company',
+								customField2: company,
+								customField3Label: 'Order',
+								customField3: orderid
+                   
+                            });
+                            
+                            // Alternatively, call webchat.renderPopup here. Note that reconnects do not apply to popup chat.
+                            webchat.renderFrame({
+                                containerEl: 'chat-container'
+                            });
+                        };
+                    }
+                })
+                .catch(function (err){
+                    console.log(err);
+                });
+        });
+    </script>
+
+</body>
+</html>
